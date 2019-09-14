@@ -15,7 +15,7 @@
 */
 /* 给每个进程的父进程发送刚创建worker进程的信息 */  
 /*
-这里的s参数是要使用的TCP套接字，ch参数是ngx_channel_t粪型的消息，size参数是ngx_channel_t结构体的大小，109参数是日志对象。
+这里的s参数是要使用的TCP套接字，ch参数是ngx_channel_t类型的消息，size参数是ngx_channel_t结构体的大小，109参数是日志对象。
 */
 //ngx_write_channel和ngx_read_channel配对   用于父子进程之间通信，通信报文见NGX_CMD_QUIT等
 ngx_int_t
@@ -46,7 +46,7 @@ ngx_write_channel(ngx_socket_t s, ngx_channel_t *ch, size_t size,
 
         cmsg.cm.cmsg_len = CMSG_LEN(sizeof(int));
         cmsg.cm.cmsg_level = SOL_SOCKET;
-        cmsg.cm.cmsg_type = SCM_RIGHTS;
+        cmsg.cm.cmsg_type = SCM_RIGHTS;//文件描述符
 
         /*
          * We have to use ngx_memcpy() instead of simple
@@ -129,7 +129,7 @@ ngx_read_channel(ngx_socket_t s, ngx_channel_t *ch, size_t size, ngx_log_t *log)
 
     msg.msg_name = NULL;
     msg.msg_namelen = 0;
-    msg.msg_iov = iov;
+    msg.msg_iov = iov;//缓冲区
     msg.msg_iovlen = 1;
 
 #if (NGX_HAVE_MSGHDR_MSG_CONTROL)

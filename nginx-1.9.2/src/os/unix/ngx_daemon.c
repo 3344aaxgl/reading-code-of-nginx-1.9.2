@@ -26,9 +26,9 @@ ngx_daemon(ngx_log_t *log)
         exit(0);
     }
 
-    ngx_pid = ngx_getpid();
+    ngx_pid = ngx_getpid();//得到进程号
 
-    if (setsid() == -1) {
+    if (setsid() == -1) {//返回新的会话ID
         ngx_log_error(NGX_LOG_EMERG, log, ngx_errno, "setsid() failed");
         return NGX_ERROR;
     }
@@ -41,7 +41,7 @@ ngx_daemon(ngx_log_t *log)
                       "open(\"/dev/null\") failed");
         return NGX_ERROR;
     }
-
+    //重定向标准输入输出
     if (dup2(fd, STDIN_FILENO) == -1) {
         ngx_log_error(NGX_LOG_EMERG, log, ngx_errno, "dup2(STDIN) failed");
         return NGX_ERROR;

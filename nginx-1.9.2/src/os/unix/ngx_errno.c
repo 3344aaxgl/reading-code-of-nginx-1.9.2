@@ -64,7 +64,7 @@ ngx_strerror_init(void)
     }
 
     for (err = 0; err < NGX_SYS_NERR; err++) {
-        msg = strerror(err);
+        msg = strerror(err);//»ñÈ¡´íÎóÃèÊö
         len = ngx_strlen(msg);
 
         p = malloc(len);

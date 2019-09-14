@@ -133,7 +133,7 @@ ngx_output_chain_to_iovec(ngx_iovec_t *vec, ngx_chain_t *in, size_t limit,
         if (in->buf->in_file) { //如果为1,表示数据在文件中，见ngx_output_chain_copy_buf
             break;
         }
-
+        //不在内存中
         if (!ngx_buf_in_memory(in->buf)) {
             ngx_log_error(NGX_LOG_ALERT, log, 0,
                           "bad buf in output chain "
@@ -148,13 +148,13 @@ ngx_output_chain_to_iovec(ngx_iovec_t *vec, ngx_chain_t *in, size_t limit,
                           in->buf->file_pos,
                           in->buf->file_last);
 
-            ngx_debug_point();
+            ngx_debug_point();//停止程序
 
             return NGX_CHAIN_ERROR;
         }
 
         size = in->buf->last - in->buf->pos;//计算这个节点的大小
-
+        //不能超过剩余空间
         if (size > limit - total) {//超过最大发送大小。截断，这次只发送这么多
             size = limit - total;
         }

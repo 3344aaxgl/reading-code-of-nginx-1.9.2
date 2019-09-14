@@ -81,20 +81,20 @@ ngx_darwin_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 
         /* create the header iovec and coalesce the neighbouring bufs */
         //把in链中的buf拷贝到vec->iovs[n++]中，注意只会拷贝内存中的数据到iovec中，不会拷贝文件中的
-        cl = ngx_output_chain_to_iovec(&header, in, limit - send, c->log);
+        cl = ngx_output_chain_to_iovec(&header, in, limit - send, c->log);//返回最后发送的节点
 
         if (cl == NGX_CHAIN_ERROR) {
             return NGX_CHAIN_ERROR;
         }
 
-        send += header.size;
+        send += header.size;//增加发送大小
 
         if (cl && cl->buf->in_file && send < limit) {
             file = cl->buf;
 
             /* coalesce the neighbouring file bufs */
 
-            file_size = ngx_chain_coalesce_file(&cl, limit - send);
+            file_size = ngx_chain_coalesce_file(&cl, limit - send);//合并
 
             send += file_size;
 

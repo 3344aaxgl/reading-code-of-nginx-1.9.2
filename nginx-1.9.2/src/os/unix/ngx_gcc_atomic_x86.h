@@ -50,7 +50,16 @@ ngx_atomic_cmp_set(ngx_atomic_t *lock, ngx_atomic_uint_t old,
 
     return res;
 }
+/*
+lock;   //多核的情况下
+cmpxchgl set, lock;    //l表示4字节，cmpxchg表示如果old和*lock相等，则把set赋值给*lock，并设置ZF为1
+sete res
+: "=a" (res)   //输出，把寄存器eax赋值给res
+："m" (*lock), "a" (old), "r" (set)  //输入参数，分别来自  内存，eax，任意寄存器
+: "cc", "memory" cc表示标志寄存器会被附带修改、memory表示内存会被附带修改
 
+http://www.lenky.info/archives/2012/11/2028
+*/
 
 /*
  * "xaddl  r, [m]":
