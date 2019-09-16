@@ -14,7 +14,7 @@ ngx_array_create(ngx_pool_t *p, ngx_uint_t n, size_t size)
 {
     ngx_array_t *a;
 
-    a = ngx_palloc(p, sizeof(ngx_array_t));
+    a = ngx_palloc(p, sizeof(ngx_array_t));//分配数组对象空间
     if (a == NULL) {
         return NULL;
     }
@@ -34,11 +34,11 @@ ngx_array_destroy(ngx_array_t *a)
 
     p = a->pool;
 
-    if ((u_char *) a->elts + a->size * a->nalloc == p->d.last) {
+    if ((u_char *) a->elts + a->size * a->nalloc == p->d.last) {//回退内存池指针
         p->d.last -= a->size * a->nalloc;
     }
 
-    if ((u_char *) a + sizeof(ngx_array_t) == p->d.last) {
+    if ((u_char *) a + sizeof(ngx_array_t) == p->d.last) {//数组还未使用，直接回退
         p->d.last = (u_char *) a;
     }
 }

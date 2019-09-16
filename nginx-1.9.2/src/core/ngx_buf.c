@@ -45,7 +45,7 @@ ngx_create_temp_buf(ngx_pool_t *pool, size_t size)
 
 
 ngx_chain_t *
-ngx_alloc_chain_link(ngx_pool_t *pool)
+ngx_alloc_chain_link(ngx_pool_t *pool)//返回可用链对象
 {
     ngx_chain_t  *cl;
 
@@ -66,7 +66,7 @@ ngx_alloc_chain_link(ngx_pool_t *pool)
 
 
 ngx_chain_t *
-ngx_create_chain_of_bufs(ngx_pool_t *pool, ngx_bufs_t *bufs)
+ngx_create_chain_of_bufs(ngx_pool_t *pool, ngx_bufs_t *bufs)//创建缓冲区链
 {
     u_char       *p;
     ngx_int_t     i;
@@ -82,7 +82,7 @@ ngx_create_chain_of_bufs(ngx_pool_t *pool, ngx_bufs_t *bufs)
 
     for (i = 0; i < bufs->num; i++) {
 
-        b = ngx_calloc_buf(pool);
+        b = ngx_calloc_buf(pool);//创建缓冲区对象
         if (b == NULL) {
             return NULL;
         }
@@ -107,14 +107,14 @@ ngx_create_chain_of_bufs(ngx_pool_t *pool, ngx_bufs_t *bufs)
         p += bufs->size;
         b->end = p;
 
-        cl = ngx_alloc_chain_link(pool);
+        cl = ngx_alloc_chain_link(pool);//创建链对象
         if (cl == NULL) {
             return NULL;
         }
 
         cl->buf = b;
         *ll = cl;
-        ll = &cl->next;
+        ll = &cl->next;//尾插
     }
 
     *ll = NULL;
@@ -129,19 +129,19 @@ ngx_chain_add_copy(ngx_pool_t *pool, ngx_chain_t **chain, ngx_chain_t *in)
     ngx_chain_t  *cl, **ll;
 
     ll = chain;
-
+    //遍历到最后一个链对象
     for (cl = *chain; cl; cl = cl->next) { // 循环结束后，ll 指向最后一个 chain 的 next，next 又是指针，所以 ll 是二级指针
         ll = &cl->next;
     }
 
     while (in) {
-        cl = ngx_alloc_chain_link(pool);
+        cl = ngx_alloc_chain_link(pool);//创建链对象
         if (cl == NULL) {
             return NGX_ERROR;
         }
 
-        cl->buf = in->buf;
-        *ll = cl;
+        cl->buf = in->buf;//指向缓冲区
+        *ll = cl;//链接到链表尾
         ll = &cl->next;
         in = in->next;
     }
@@ -164,12 +164,12 @@ ngx_chain_get_free_buf(ngx_pool_t *p, ngx_chain_t **free)
         return cl;
     }
 
-    cl = ngx_alloc_chain_link(p);
+    cl = ngx_alloc_chain_link(p);//创建新的链表节点对象
     if (cl == NULL) {
         return NULL;
     }
 
-    cl->buf = ngx_calloc_buf(p);
+    cl->buf = ngx_calloc_buf(p);//创建缓冲区
     if (cl->buf == NULL) {
         return NULL;
     }
@@ -214,7 +214,7 @@ ngx_chain_update_chains(ngx_pool_t *p, ngx_chain_t **free, ngx_chain_t **busy,
 
         if (cl->buf->tag != tag) {// tag 中存储的是 函数指针
             *busy = cl->next;
-            ngx_free_chain(p, cl);
+            ngx_free_chain(p, cl);//回收到pool的chain链表
             continue;
         }
 
@@ -242,9 +242,9 @@ ngx_chain_coalesce_file(ngx_chain_t **in, off_t limit)
     fd = cl->buf->file->fd;
 
     do {
-        size = cl->buf->file_last - cl->buf->file_pos;
+        size = cl->buf->file_last - cl->buf->file_pos;//待处理大小
 
-        if (size > limit - total) {
+        if (size > limit - total) {//超过限制
             size = limit - total;
 
             aligned = (cl->buf->file_pos + size + ngx_pagesize - 1)

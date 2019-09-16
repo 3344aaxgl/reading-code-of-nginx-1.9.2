@@ -41,7 +41,7 @@ ngx_array_init(ngx_array_t *array, ngx_pool_t *pool, ngx_uint_t n, size_t size)
     array->nalloc = n;
     array->pool = pool;
 
-    array->elts = ngx_palloc(pool, n * size);
+    array->elts = ngx_palloc(pool, n * size);//分配数组空间
     if (array->elts == NULL) {
         return NGX_ERROR;
     }
